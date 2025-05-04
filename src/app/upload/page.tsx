@@ -16,7 +16,12 @@ export default function UploadPage() {
   const [projectId, setProjectId] = useState<string>('');
   const [locationDescription, setLocationDescription] = useState<string>('');
   const [description, setDescription] = useState<string>('');
-  const [projects, setProjects] = useState<any[]>([]);
+  const [projects, setProjects] = useState<Array<{
+    id: string;
+    name: string;
+    created_at: string;
+    [key: string]: any;
+  }>>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isProjectsLoading, setIsProjectsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -129,7 +134,7 @@ export default function UploadPage() {
         const gpsCoordinates = exifData ? extractGPSCoordinates(exifData) : null;
         
         // Extract location from description
-        const locationData = await extractLocationFromDescription(locationDescription);
+        await extractLocationFromDescription(locationDescription);
         
         // Get weather data if GPS coordinates are available
         let weatherData = null;
@@ -160,7 +165,7 @@ export default function UploadPage() {
         const fileName = `${Date.now()}-${fileIndex}.${fileExt}`;
         const filePath = `${projectId}/${fileName}`;
         
-        const { data: uploadData, error: uploadError } = await supabase.storage
+        const { error: uploadError } = await supabase.storage
           .from('photos')
           .upload(filePath, file, {
             cacheControl: '3600',
@@ -172,12 +177,12 @@ export default function UploadPage() {
         }
         
         // Create a public URL for the uploaded file
-        const { data: { publicUrl } } = supabase.storage
+        supabase.storage
           .from('photos')
           .getPublicUrl(filePath);
         
         // Save photo information to the database
-        const { data: photoData, error: photoError } = await supabase
+        const { error: photoError } = await supabase
           .from('photos')
           .insert({
             project_id: projectId,
@@ -212,7 +217,7 @@ export default function UploadPage() {
     }
   };
 
-  const removeFile = (index: number) => {
+  const removeFile = (index: number): void => {
     const newFiles = [...files];
     newFiles.splice(index, 1);
     setFiles(newFiles);

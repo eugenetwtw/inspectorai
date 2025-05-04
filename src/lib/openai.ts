@@ -61,10 +61,18 @@ export async function analyzeImage(
   }
 }
 
+// Define interface for photo details
+export interface PhotoDetails {
+  location_description?: string;
+  taken_at?: string;
+  weather_data?: Record<string, unknown>;
+  [key: string]: unknown;
+}
+
 // Function to generate an NCR report based on analysis
 export async function generateNCRReport(
   analysisResult: string,
-  photoDetails: any,
+  photoDetails: PhotoDetails,
   specifications?: string,
   drawings?: string,
   contractItems?: string
@@ -114,7 +122,7 @@ Format the report with the following sections:
 // Function to generate a PAR report for safety issues
 export async function generatePARReport(
   analysisResult: string,
-  photoDetails: any
+  photoDetails: PhotoDetails
 ) {
   try {
     const response = await openai.chat.completions.create({

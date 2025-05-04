@@ -1,6 +1,4 @@
-import Image from "next/image";
 import Link from "next/link";
-import { useAuth } from "@/lib/auth";
 
 export default function Home() {
   return (

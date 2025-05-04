@@ -20,6 +20,7 @@ export default function Dashboard() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const auth = useAuth();
 
   useEffect(() => {
     const fetchProjects = async () => {
@@ -85,7 +86,7 @@ export default function Dashboard() {
               {user?.email}
             </span>
             <button
-              onClick={() => useAuth().signOut()}
+              onClick={() => auth.signOut()}
               className="px-3 py-1 text-sm text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
             >
               Sign out

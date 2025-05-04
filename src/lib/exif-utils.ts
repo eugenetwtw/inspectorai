@@ -1,13 +1,32 @@
 import ExifReader from 'exifreader';
 
+// Define interface for EXIF data
+export interface ExifData {
+  dateTimeOriginal?: string;
+  dateTime?: string;
+  gps?: {
+    latitude: string;
+    longitude: string;
+    latitudeDecimal?: number;
+    longitudeDecimal?: number;
+  };
+  make?: string;
+  model?: string;
+  dimensions?: {
+    width: number;
+    height: number;
+  };
+  [key: string]: unknown;
+}
+
 // Function to extract EXIF data from an image file
-export async function extractExifData(file: File): Promise<any> {
+export async function extractExifData(file: File): Promise<ExifData | null> {
   try {
     const arrayBuffer = await file.arrayBuffer();
     const tags = ExifReader.load(arrayBuffer);
     
     // Extract relevant EXIF data
-    const exifData: any = {};
+    const exifData: ExifData = {};
     
     // Date and time
     if (tags['DateTimeOriginal']) {
@@ -79,7 +98,7 @@ function convertDMSToDecimal(dms: string): number | null {
 }
 
 // Function to extract date and time from EXIF data
-export function extractDateTime(exifData: any): Date | null {
+export function extractDateTime(exifData: ExifData): Date | null {
   try {
     if (exifData.dateTimeOriginal) {
       // Format: "YYYY:MM:DD HH:MM:SS"
@@ -119,7 +138,7 @@ export function extractDateTime(exifData: any): Date | null {
 }
 
 // Function to extract GPS coordinates from EXIF data
-export function extractGPSCoordinates(exifData: any): { lat: number; lon: number } | null {
+export function extractGPSCoordinates(exifData: ExifData): { lat: number; lon: number } | null {
   try {
     if (exifData.gps && exifData.gps.latitudeDecimal && exifData.gps.longitudeDecimal) {
       return {

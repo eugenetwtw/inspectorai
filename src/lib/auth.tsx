@@ -21,7 +21,7 @@ type AuthContextType = {
   signOut: () => Promise<void>;
   resetPassword: (email: string) => Promise<{
     error: Error | null;
-    data: any;
+    data: Record<string, unknown>;
   }>;
 };
 
